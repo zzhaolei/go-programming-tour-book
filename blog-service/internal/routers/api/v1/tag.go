@@ -8,6 +8,7 @@ func NewTag() Tag {
 	return Tag{}
 }
 
+// Get description
 // @Summary 获取单个标签
 // @Produce  json
 // @Param id path int true "标签 ID"
@@ -17,6 +18,7 @@ func NewTag() Tag {
 // @Router /api/v1/tags/{id} [get]
 func (t Tag) Get(c *gin.Context) {}
 
+// List description
 // @Summary 获取多个标签
 // @Produce json
 // @Param name query string false "标签名称" maxlength(100)
@@ -29,6 +31,7 @@ func (t Tag) Get(c *gin.Context) {}
 // @Router /api/v1/tags [get]
 func (t Tag) List(c *gin.Context) {}
 
+// Create description
 // @Summary 新增标签
 // @Produce  json
 // @Param name body string true "标签名称" minlength(3) maxlength(100)
@@ -40,6 +43,7 @@ func (t Tag) List(c *gin.Context) {}
 // @Router /api/v1/tags [post]
 func (t Tag) Create(c *gin.Context) {}
 
+// Update description
 // @Summary 更新标签
 // @Produce  json
 // @Param id path int true "标签 ID"
@@ -52,6 +56,7 @@ func (t Tag) Create(c *gin.Context) {}
 // @Router /api/v1/tags/{id} [put]
 func (t Tag) Update(c *gin.Context) {}
 
+// Delete description
 // @Summary 删除标签
 // @Produce  json
 // @Param id path int true "标签 ID"

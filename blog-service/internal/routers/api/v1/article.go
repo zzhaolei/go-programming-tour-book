@@ -10,6 +10,7 @@ func NewArticle() Article {
 	return Article{}
 }
 
+// Get description
 // @Summary 获取单个文章
 // @Produce  json
 // @Param id path int true "文章 ID"
@@ -19,6 +20,7 @@ func NewArticle() Article {
 // @Router /api/v1/articles/{id} [get]
 func (a Article) Get(c *gin.Context) {}
 
+// List description
 // @Summary 获取多篇文章
 // @Produce json
 // @Param name query string false "文章名称" maxlength(100)
@@ -31,6 +33,7 @@ func (a Article) Get(c *gin.Context) {}
 // @Router /api/v1/articles [get]
 func (a Article) List(c *gin.Context) {}
 
+// Create description
 // @Summary 新增文章
 // @Produce json
 // @Param name body string true "文章名称" minlength(3) maxlength(100)
@@ -42,6 +45,7 @@ func (a Article) List(c *gin.Context) {}
 // @Router /api/v1/articles [post]
 func (a Article) Create(c *gin.Context) {}
 
+// Update description
 // @Summary 更新文章
 // @Produce  json
 // @Param id path int true "文章 ID"
@@ -54,6 +58,7 @@ func (a Article) Create(c *gin.Context) {}
 // @Router /api/v1/articles/{id} [put]
 func (a Article) Update(c *gin.Context) {}
 
+// Delete description
 // @Summary 删除文章
 // @Produce  json
 // @Param id path int true "文章 ID"
