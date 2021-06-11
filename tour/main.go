@@ -2,8 +2,8 @@ package main
 
 import (
 	"errors"
-	"flag"
 	"fmt"
+	"github.com/zzhaolei/go-programming-tour-book/tour/cmd"
 	"log"
 )
 
@@ -23,24 +23,8 @@ func (i *Name) Set(value string) error {
 }
 
 func main() {
-	flag.Parse()
-	args := flag.Args()
-	if len(args) <= 0 {
-		return
+	err := cmd.Execute()
+	if err != nil {
+		log.Fatalf("cmd.Execute err: %v, %s", err, err)
 	}
-
-	var name Name
-
-	switch args[0] {
-	case "go":
-		goCmd := flag.NewFlagSet("go", flag.ExitOnError)
-		goCmd.Var(&name, "name", "Go语言")
-		_ = goCmd.Parse(args[1:])
-	case "php":
-		phpCmd := flag.NewFlagSet("php", flag.ExitOnError)
-		phpCmd.Var(&name, "n", "PHP语言")
-		_ = phpCmd.Parse(args[1:])
-	}
-
-	log.Println(name)
 }
