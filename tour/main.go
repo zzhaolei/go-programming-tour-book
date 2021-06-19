@@ -3,13 +3,14 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/zzhaolei/go-programming-tour-book/tour/cmd"
 	"log"
+
+	"github.com/zzhaolei/go-programming-tour-book/tour/cmd"
 )
 
 type Name string
 
-func (i *Name) String()string{
+func (i *Name) String() string {
 	return fmt.Sprint(*i)
 }
 
