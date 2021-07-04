@@ -88,6 +88,11 @@ func setupLogger() error {
 	return nil
 }
 
+// main 入口函数
+// @title 博客系统
+// @version 1.0.0
+// @description Go语言编程之旅
+// @termsOfService 没有呢
 func main() {
 	gin.SetMode(global.ServerSetting.RunMode)
 	router := routers.NewRouter()
