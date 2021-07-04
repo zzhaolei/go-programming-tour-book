@@ -26,7 +26,7 @@ type Model struct {
 func NewDBEngine(d *setting.DatabaseSetting) (*gorm.DB, error) {
 	// 格式化数据库链接
 	dsn := fmt.Sprintf(
-		"%s:%s@tcp(%s)/%scharset=%s&parseTime=%t&loc=Local",
+		"%s:%s@tcp(%s)/%s?charset=%s&parseTime=%t&loc=Local",
 		d.Username,
 		d.Password,
 		d.Host,
