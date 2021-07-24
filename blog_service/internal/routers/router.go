@@ -5,12 +5,13 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	_ "github.com/zzhaolei/go-programming-tour-book/blog_service/docs"
+	"github.com/zzhaolei/go-programming-tour-book/blog_service/internal/middleware"
 	v1 "github.com/zzhaolei/go-programming-tour-book/blog_service/internal/routers/api/v1"
 )
 
 func NewRouter() *gin.Engine {
 	r := gin.New()
-	r.Use(gin.Logger(), gin.Recovery())
+	r.Use(gin.Logger(), gin.Recovery(), middleware.Translations())
 	// OpenAPI
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
@@ -22,7 +23,8 @@ func NewRouter() *gin.Engine {
 		apiV1.DELETE("/tags/:id", tag.Delete)
 		apiV1.PUT("/tags/:id", tag.Update)
 		apiV1.PATCH("/tags/:id", tag.Update)
-		apiV1.GET("/tags", tag.Get)
+		apiV1.GET("/tags/:id", tag.Get)
+		apiV1.GET("/tags", tag.List)
 
 		article := v1.NewArticle()
 		apiV1.POST("/articles", article.Create)
