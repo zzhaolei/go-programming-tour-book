@@ -70,3 +70,25 @@ func NewDBEngine(d *setting.DatabaseSetting) (*gorm.DB, error) {
 
 	return db, nil
 }
+
+func updateTimestampForCreateCallback(db *gorm.DB) {
+	if db.Error == nil {
+		nowTime := time.Now().Unix()
+		if createTimeField, ok := db.Statement.Schema.FieldsByName["CreatedOn"]; ok {
+			if createTimeField.Size == 0 {
+				_ = createTimeField.Set(db.Statement.ReflectValue, nowTime)
+			}
+		}
+
+		if modifyTimeField, ok := db.Statement.Schema.FieldsByName["ModifiedOn"]; ok {
+			if modifyTimeField.Size == 0 {
+				_ = modifyTimeField.Set(db.Statement.ReflectValue, nowTime)
+			}
+		}
+	}
+}
+func updateTimestampForUpdateCallback(db *gorm.DB) {
+
+}
+func deleteCallback(db *gorm.DB)       {}
+func addExtraSpaceIfExist(db *gorm.DB) {}
