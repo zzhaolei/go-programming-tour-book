@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 )
 
+// EncodeMD5 将字符串hash
 func EncodeMD5(value string) string {
 	m := md5.New()
 	m.Write([]byte(value))

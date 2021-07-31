@@ -1,8 +1,6 @@
 package routers
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -16,15 +14,23 @@ import (
 func NewRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(gin.Logger(), gin.Recovery(), middleware.Translations())
+
+	// 登陆
+	r.POST("/auth", api.GetAuth)
+
 	// OpenAPI
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
 	// 文件上传服务
 	upload := api.NewUpload()
-	r.POST("/upload/file", upload.UploadFile)
+	r.POST("/upload/file", middleware.JWT(), upload.UploadFile)
+
 	// 静态资源
-	r.StaticFS("/static", http.Dir(global.AppSetting.UploadSavePath))
+	static := r.Group("/static", middleware.JWT())
+	static.StaticFS("/", gin.Dir(global.AppSetting.UploadSavePath, false))
 
 	apiV1 := r.Group("/api/v1")
+	apiV1.Use(middleware.JWT())
 	{
 		tag := v1.NewTag()
 		apiV1.POST("/tags", tag.Create)
