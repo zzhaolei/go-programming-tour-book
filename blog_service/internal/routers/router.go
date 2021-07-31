@@ -1,11 +1,15 @@
 package routers
 
 import (
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
 	_ "github.com/zzhaolei/go-programming-tour-book/blog_service/docs"
+	"github.com/zzhaolei/go-programming-tour-book/blog_service/global"
 	"github.com/zzhaolei/go-programming-tour-book/blog_service/internal/middleware"
+	"github.com/zzhaolei/go-programming-tour-book/blog_service/internal/routers/api"
 	v1 "github.com/zzhaolei/go-programming-tour-book/blog_service/internal/routers/api/v1"
 )
 
@@ -14,9 +18,13 @@ func NewRouter() *gin.Engine {
 	r.Use(gin.Logger(), gin.Recovery(), middleware.Translations())
 	// OpenAPI
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	// 文件上传服务
+	upload := api.NewUpload()
+	r.POST("/upload/file", upload.UploadFile)
+	// 静态资源
+	r.StaticFS("/static", http.Dir(global.AppSetting.UploadSavePath))
 
 	apiV1 := r.Group("/api/v1")
-
 	{
 		tag := v1.NewTag()
 		apiV1.POST("/tags", tag.Create)
