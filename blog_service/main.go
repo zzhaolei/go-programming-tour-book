@@ -49,15 +49,22 @@ func setupSetting() error {
 	if err != nil {
 		return err
 	}
+
 	err = s.ReadSection("App", &global.AppSetting)
 	if err != nil {
 		return err
 	}
+
 	err = s.ReadSection("Database", &global.DatabaseSetting)
 	if err != nil {
 		return err
 	}
 	err = s.ReadSection("JWT", &global.JWTSetting)
+	if err != nil {
+		return err
+	}
+
+	err = s.ReadSection("Email", &global.EmailSetting)
 	if err != nil {
 		return err
 	}

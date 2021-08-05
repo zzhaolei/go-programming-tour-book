@@ -3,6 +3,8 @@ Server:
   HttpPort: 8000
   ReadTimeout: 60
   WriteTimeout: 60
+  DefaultContextTimeout: 60
+
 App:
   DefaultPageSize: 10
   MaxPageSize: 100
@@ -16,6 +18,7 @@ App:
     - .jpg
     - .jpeg
     - .png
+
 Database:
   Username: root
   Password: root
@@ -32,3 +35,13 @@ JWT:
   Secret: creator
   Issuer: blog-service
   Expire: 7200  # 1 * 2 * 60 * 60
+
+Email:
+  Host: smtp.qq.com
+  Post: 465
+  UserName: xxx@qq.com
+  Password: xxx
+  IsSSL: true
+  From: xxx@qq.com
+  To:
+    - xxx@qq.com

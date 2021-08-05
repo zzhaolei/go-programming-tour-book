@@ -3,10 +3,11 @@ package setting
 import "time"
 
 type ServerSetting struct {
-	RunMode      string
-	HttpPort     string
-	ReadTimeout  time.Duration
-	WriteTimeout time.Duration
+	RunMode               string
+	HttpPort              string
+	ReadTimeout           time.Duration
+	WriteTimeout          time.Duration
+	DefaultContextTimeout time.Duration
 }
 
 type AppSetting struct {
@@ -38,6 +39,16 @@ type JWTSetting struct {
 	Secret string
 	Issuer string
 	Expire time.Duration
+}
+
+type EmailSetting struct {
+	Host     string
+	Port     int
+	UserName string
+	Password string
+	IsSSL    bool
+	From     string
+	To       []string
 }
 
 // ReadSection 读取配置，并将配置存入 v 中

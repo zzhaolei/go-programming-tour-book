@@ -1,6 +1,8 @@
 package routers
 
 import (
+	"time"
+
 	"github.com/gin-gonic/gin"
 	ginSwagger "github.com/swaggo/gin-swagger"
 	"github.com/swaggo/gin-swagger/swaggerFiles"
@@ -9,11 +11,28 @@ import (
 	"github.com/zzhaolei/go-programming-tour-book/blog_service/internal/middleware"
 	"github.com/zzhaolei/go-programming-tour-book/blog_service/internal/routers/api"
 	v1 "github.com/zzhaolei/go-programming-tour-book/blog_service/internal/routers/api/v1"
+	"github.com/zzhaolei/go-programming-tour-book/blog_service/pkg/limit"
 )
+
+var methodLimiters = limit.NewMethodLimiter().AddBuckets(limit.LimiterBucketRule{
+	Key:          "/auth",
+	FillInterval: time.Second,
+	Capacity:     10,
+	Quantum:      10,
+})
 
 func NewRouter() *gin.Engine {
 	r := gin.New()
-	r.Use(gin.Logger(), gin.Recovery(), middleware.Translations())
+	if global.ServerSetting.RunMode == "debug" {
+		r.Use(gin.Logger(), gin.Recovery())
+	} else {
+		r.Use(middleware.AccessLog(), middleware.Recovery())
+	}
+	r.Use(
+		middleware.RateLimiter(methodLimiters),
+		middleware.ContextTimeout(global.ServerSetting.DefaultContextTimeout*time.Second),
+		middleware.Translations(),
+	)
 
 	// 登陆
 	r.POST("/auth", api.GetAuth)
