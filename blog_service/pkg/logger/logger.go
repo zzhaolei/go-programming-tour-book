@@ -8,6 +8,8 @@ import (
 	"log"
 	"runtime"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 type Level int8
@@ -118,12 +120,24 @@ func (l *Logger) WithCallersFrames() *Logger {
 	return ll
 }
 
+func (l *Logger) WithTracer() *Logger {
+	if ginCtx, ok := l.ctx.(*gin.Context); ok {
+		return l.WithFields(Fields{
+			"trace_id": ginCtx.MustGet("X-Trace-ID"),
+			"span_id":  ginCtx.MustGet("X-Span-ID"),
+		})
+	}
+	return l
+}
+
 func (l *Logger) JSONFormat(level Level, message string) map[string]interface{} {
 	data := make(Fields, len(l.fields)+4)
 	data["level"] = level.String()
 	data["time"] = time.Now().Local().UnixNano()
 	data["message"] = message
 	data["callers"] = l.callers
+	data["trace_id"] = ""
+	data["span_id"] = ""
 
 	if len(l.fields) > 0 {
 		for k, v := range l.fields {
@@ -140,13 +154,7 @@ func (l *Logger) Output(level Level, message string) {
 	body, _ := json.Marshal(l.JSONFormat(level, message))
 	content := string(body)
 	switch level {
-	case LevelDebug:
-		l.newLogger.Print(content)
-	case LevelInfo:
-		l.newLogger.Print(content)
-	case LevelWarn:
-		l.newLogger.Print(content)
-	case LevelError:
+	case LevelDebug, LevelInfo, LevelWarn, LevelError:
 		l.newLogger.Print(content)
 	case LevelFatal:
 		l.newLogger.Fatal(content)
@@ -163,12 +171,12 @@ func (l *Logger) Debugf(format string, v ...interface{}) {
 	l.Output(LevelDebug, fmt.Sprintf(format, v...))
 }
 
-func (l *Logger) Info(v ...interface{}) {
-	l.Output(LevelInfo, fmt.Sprint(v...))
+func (l *Logger) Info(c context.Context, v ...interface{}) {
+	l.WithContext(c).WithTracer().Output(LevelInfo, fmt.Sprint(v...))
 }
 
-func (l *Logger) Infof(format string, v ...interface{}) {
-	l.Output(LevelInfo, fmt.Sprintf(format, v...))
+func (l *Logger) Infof(c context.Context, format string, v ...interface{}) {
+	l.WithContext(c).WithTracer().Output(LevelInfo, fmt.Sprintf(format, v...))
 }
 
 func (l *Logger) Warn(v ...interface{}) {
@@ -190,6 +198,7 @@ func (l *Logger) Errorf(format string, v ...interface{}) {
 func (l *Logger) Fatal(v ...interface{}) {
 	l.Output(LevelFatal, fmt.Sprint(v...))
 }
+
 func (l *Logger) Fatalf(format string, v ...interface{}) {
 	l.Output(LevelFatal, fmt.Sprintf(format, v...))
 }
@@ -197,6 +206,7 @@ func (l *Logger) Fatalf(format string, v ...interface{}) {
 func (l *Logger) Panic(v ...interface{}) {
 	l.Output(LevelPanic, fmt.Sprint(v...))
 }
+
 func (l *Logger) Panicf(format string, v ...interface{}) {
 	l.Output(LevelPanic, fmt.Sprintf(format, v...))
 }

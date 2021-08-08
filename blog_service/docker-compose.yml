@@ -1,0 +1,34 @@
+version: '3'
+
+
+services:
+  jaeger:
+    image: jaegertracing/all-in-one:1.16
+    container_name: jaeger
+    environment:
+      COLLECTOR_ZIPKIN_HTTP_PORT: 9411
+    ports:
+      - "5775:5775/udp"  # 以compact协议接收zipkin.thrift数据
+      - "6831:6831/udp"  # 以compact协议接收jaeger.thrift数据
+      - "6832:6832/udp"  # 以binary协议接收jaeger.thrift数据
+      - "5778:5778"  # Jaeger的服务配置端口
+      - "16686:16686"  # Jaeger的WebUI
+      - "14268:14268"  # 通过Client直接接收jaeger.thrift的数据
+      - "9411:9411"  # 兼容Zipkin的HTTP端口
+    depends_on:
+      - redis
+      - mysql
+
+  redis:
+    image: redis:alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"

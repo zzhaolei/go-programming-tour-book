@@ -29,9 +29,11 @@ func NewRouter() *gin.Engine {
 		r.Use(middleware.AccessLog(), middleware.Recovery())
 	}
 	r.Use(
+		middleware.AccessLog(),
 		middleware.RateLimiter(methodLimiters),
 		middleware.ContextTimeout(global.ServerSetting.DefaultContextTimeout*time.Second),
 		middleware.Translations(),
+		middleware.Tracing(),
 	)
 
 	// 登陆

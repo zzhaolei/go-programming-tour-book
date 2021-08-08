@@ -1,11 +1,14 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/zzhaolei/go-programming-tour-book/blog_service/pkg/tracer"
 
 	"github.com/zzhaolei/go-programming-tour-book/blog_service/pkg/logger"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -36,6 +39,11 @@ func init() {
 	err = setupLogger()
 	if err != nil {
 		log.Fatalf("init.setupLogger err: %v", err)
+	}
+
+	err = setupTracer()
+	if err != nil {
+		log.Fatalf("init.setupTracer err: %v", err)
 	}
 }
 
@@ -100,6 +108,20 @@ func setupLogger() error {
 	return nil
 }
 
+func setupTracer() error {
+	jaegerTracer, _, err := tracer.NewJaegerTrace(
+		"blog_service",
+		"127.0.0.1:6831",
+	)
+
+	if err != nil {
+		return err
+	}
+
+	global.Tracer = jaegerTracer
+	return nil
+}
+
 // main 入口函数
 // @title 博客系统
 // @version 1.0.0
@@ -117,7 +139,7 @@ func main() {
 		WriteTimeout:   global.ServerSetting.WriteTimeout,
 		MaxHeaderBytes: 1 << 20,
 	}
-	global.Logger.Infof("ListenAndServe: %s", addr)
+	global.Logger.Infof(context.Background(), "ListenAndServe: %s", addr)
 	err := server.ListenAndServe()
 	log.Fatalln(err)
 }
