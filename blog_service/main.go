@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
@@ -24,6 +25,13 @@ import (
 	"github.com/zzhaolei/go-programming-tour-book/blog_service/internal/routers"
 )
 
+var (
+	isVersion    bool
+	buildTime    string
+	buildVersion string
+	gitCommitID  string
+)
+
 func init() {
 	var err error
 	err = setupSetting()
@@ -44,6 +52,11 @@ func init() {
 	err = setupTracer()
 	if err != nil {
 		log.Fatalf("init.setupTracer err: %v", err)
+	}
+
+	err = setupFlag()
+	if err != nil {
+		log.Fatalf("init.setupFlag err: %v", err)
 	}
 }
 
@@ -122,12 +135,24 @@ func setupTracer() error {
 	return nil
 }
 
+func setupFlag() error {
+	flag.BoolVar(&isVersion, "version", false, "编译信息")
+	flag.Parse()
+	return nil
+}
+
 // main 入口函数
 // @title 博客系统
 // @version 1.0.0
 // @description Go语言编程之旅
 // @termsOfService 没有呢
 func main() {
+	if isVersion {
+		fmt.Println("BuildTime: ", buildTime)
+		fmt.Println("BuildVersion: ", buildVersion)
+		fmt.Println("GitCommitID: ", gitCommitID)
+		return
+	}
 	gin.SetMode(global.ServerSetting.RunMode)
 	router := routers.NewRouter()
 
